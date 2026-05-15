@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#ffffff">
     <title>校园应急救护系统</title>
-    <!-- 腾讯地图API -->
-    <script src="https://map.qq.com/api/js?v=2.exp&key=你的腾讯地图密钥"></script>
+    <script src="https://map.qq.com/api/js?v=2.exp&key=6WOBZ-EEELQ-VSD5J-BQPIQ-Q2HQ6-AWFQN"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -146,14 +145,12 @@
 </head>
 <body class="bg-gray-50 text-gray-900 h-screen flex flex-col overflow-hidden">
 
-    <!-- 加载界面 -->
     <div id="loading-screen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
         <div class="loading-spinner mb-4"></div>
         <div class="text-lg font-bold text-gray-800">正在加载校园应急救护系统</div>
         <div class="text-sm text-gray-500 mt-2">请允许定位以获取精准服务</div>
     </div>
 
-    <!-- 顶部标题栏 -->
     <header id="main-header" class="bg-white shadow-sm z-40 px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-2">
             <div class="w-8 h-8 bg-emergency rounded-lg flex items-center justify-center">
@@ -172,14 +169,10 @@
         </div>
     </header>
 
-    <!-- 主内容区 -->
     <main id="main-content" class="flex-1 overflow-hidden relative">
-        
-        <!-- 地图页 -->
         <div id="map-page" class="absolute inset-0 bg-gray-100">
             <div id="map" class="w-full h-full"></div>
             
-            <!-- 最近AED推荐浮窗 -->
             <div id="nearest-aed-panel" class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl z-30 nearest-float hidden">
                 <div class="p-4">
                     <div class="flex items-center gap-2 mb-3">
@@ -196,35 +189,23 @@
                     </div>
                     
                     <div class="flex gap-3">
-                        <button onclick="viewNearestDetail()" class="flex-1 py-3 border-2 border-emergency text-emergency font-bold rounded-xl card-press text-base">
-                            查看详情
-                        </button>
+                        <button onclick="viewNearestDetail()" class="flex-1 py-3 border-2 border-emergency text-emergency font-bold rounded-xl card-press text-base">查看详情</button>
                         <button onclick="navigateToNearest()" class="flex-1 py-3 bg-emergency text-white font-bold rounded-xl shadow-lg shadow-red-200 card-press text-base flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 7m0 13V7"/>
-                            </svg>
-                            一键导航至此
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 7m0 13V7"/></svg>一键导航至此
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- 地图控制按钮 -->
             <div class="absolute top-4 right-4 z-20 flex flex-col gap-2">
                 <button onclick="centerOnUser()" class="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center card-press">
-                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-2.761 0-5 2.239-5 5s2.239 5 5 5 5-2.239 5-5-2.239-5-5-5z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
-                    </svg>
+                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-2.761 0-5 2.239-5 5s2.239 5 5 5 5-2.239 5-5-2.239-5-5-5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
                 </button>
                 <button onclick="toggleLayer()" id="layer-btn" class="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center card-press">
-                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-                    </svg>
+                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
                 </button>
             </div>
 
-            <!-- 图层切换面板 -->
             <div id="layer-panel" class="absolute top-20 right-4 z-20 bg-white rounded-xl shadow-xl p-3 hidden">
                 <div class="text-sm font-bold text-gray-700 mb-2">地图图层</div>
                 <label class="flex items-center gap-2 py-2 px-3 cursor-pointer hover:bg-gray-50 rounded-lg">
@@ -238,53 +219,37 @@
             </div>
         </div>
 
-        <!-- 急救知识页 -->
         <div id="knowledge-page" class="absolute inset-0 bg-gray-50 overflow-y-auto page-hidden pb-20">
             <div class="p-4">
                 <h2 class="text-xl font-black mb-1">急救知识</h2>
                 <p class="text-sm text-gray-500 mb-4">关键时刻能救命的基础急救技能</p>
-                
-                <div id="knowledge-cards" class="grid grid-cols-1 gap-4">
-                    <!-- 动态生成卡片 -->
-                </div>
+                <div id="knowledge-cards" class="grid grid-cols-1 gap-4"></div>
             </div>
         </div>
 
-        <!-- 急救知识详情页 -->
         <div id="knowledge-detail-page" class="absolute inset-0 bg-white overflow-y-auto page-hidden z-30">
             <div class="sticky top-0 bg-white z-10 px-4 py-3 flex items-center gap-3 shadow-sm">
                 <button onclick="closeKnowledgeDetail()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <div class="text-lg font-bold" id="detail-title">详情</div>
             </div>
-            <div id="detail-content" class="p-4 pb-20">
-                <!-- 动态生成内容 -->
-            </div>
+            <div id="detail-content" class="p-4 pb-20"></div>
         </div>
     </main>
 
-    <!-- AED详情弹窗 -->
     <div id="aed-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-end">
         <div class="bg-white w-full rounded-t-3xl max-h-[85vh] overflow-y-auto modal-enter">
             <div class="sticky top-0 bg-white px-4 py-3 border-b flex items-center justify-between">
                 <h3 class="text-lg font-bold">AED设备详情</h3>
                 <button onclick="closeAEDModal()" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-            
-            <div id="aed-modal-content" class="p-4">
-                <!-- 动态填充 -->
-            </div>
+            <div id="aed-modal-content" class="p-4"></div>
         </div>
     </div>
 
-    <!-- 紧急呼叫面板 -->
     <div id="emergency-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-end">
         <div class="bg-white w-full rounded-t-3xl p-6 modal-enter">
             <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4"></div>
@@ -294,9 +259,7 @@
             <div class="space-y-4">
                 <button onclick="callNumber('120')" class="w-full bg-emergency hover:bg-emergency-dark text-white py-5 rounded-2xl shadow-xl card-press flex items-center justify-center gap-3">
                     <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                        </svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                     </div>
                     <div class="text-left">
                         <div class="text-2xl font-black">拨打 120</div>
@@ -306,9 +269,7 @@
 
                 <button onclick="callHospital()" class="w-full bg-medical hover:bg-teal-700 text-white py-5 rounded-2xl shadow-xl card-press flex items-center justify-center gap-3">
                     <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                        </svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     </div>
                     <div class="text-left">
                         <div class="text-2xl font-black" id="hospital-phone">010-12345678</div>
@@ -318,54 +279,39 @@
             </div>
             <div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4">
                 <div class="flex items-start gap-2">
-                    <svg class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+                    <svg class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <p class="text-sm text-amber-800">报警时请清晰说明：<br>• 具体位置（校区、楼栋、楼层）<br>• 患者当前状态<br>• 联系电话保持畅通</p>
                 </div>
             </div>
 
-            <button onclick="closeEmergencyModal()" class="w-full mt-4 py-3 text-gray-500 font-medium card-press">
-                取消
-            </button>
+            <button onclick="closeEmergencyModal()" class="w-full mt-4 py-3 text-gray-500 font-medium card-press">取消</button>
         </div>
     </div>
 
-    <!-- 底部导航栏 -->
     <nav id="bottom-nav" class="bottom-nav bg-white border-t border-gray-200 px-4 py-2 z-40">
         <div class="flex justify-around items-center max-w-lg mx-auto">
             <button onclick="switchTab('map')" id="nav-map" class="nav-btn flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-all">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-2.761 0-5 2.239-5 5s2.239 5 5 5 5-2.239 5-5-2.239-5-5-5z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
-                </svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-2.761 0-5 2.239-5 5s2.239 5 5 5 5-2.239 5-5-2.239-5-5-5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
                 <span class="text-xs font-medium">AED地图</span>
             </button>
             
             <button onclick="switchTab('knowledge')" id="nav-knowledge" class="nav-btn flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-all text-gray-400">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                </svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                 <span class="text-xs font-medium">急救知识</span>
             </button>
 
             <button onclick="openEmergencyModal()" id="nav-emergency" class="flex flex-col items-center -mt-6">
                 <div class="emergency-btn w-16 h-16 bg-emergency rounded-full shadow-xl shadow-red-200 flex items-center justify-center border-4 border-white">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                    </svg>
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                 </div>
                 <span class="text-xs font-bold text-emergency mt-1">紧急呼叫</span>
             </button>
         </div>
     </nav>
 
-    <!-- 定位权限拒绝提示 -->
     <div id="location-denied" class="fixed top-20 left-4 right-4 bg-amber-50 border border-amber-200 rounded-xl p-4 z-40 hidden shadow-lg">
         <div class="flex items-start gap-2">
-            <svg class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-            </svg>
+            <svg class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
             <div class="flex-1">
                 <p class="text-sm text-amber-800 font-medium">无法获取您的位置</p>
                 <p class="text-xs text-amber-700 mt-1">请允许定位权限，或手动在地图上点击选择您的位置</p>
@@ -375,10 +321,6 @@
     </div>
 
     <script>
-        // ========== 数据层 ==========
-        const CAMPUS_CENTER = new qq.maps.LatLng(39.532, 116.658);
-        
-        // AED数据
         const AED_DATA = {
             type: "FeatureCollection",
             features: [
@@ -395,7 +337,6 @@
             ]
         };
 
-        // 急救知识数据
         const KNOWLEDGE_DATA = [
             {id:1,title:"心肺复苏（CPR）步骤",category:"cpr-card",icon:`<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`,summary:"黄金4分钟内进行CPR可大幅提高生存率",steps:[{title:"确认环境安全",desc:"确保现场对您和患者都是安全的，观察是否有危险物品或交通。"},{title:"判断意识",desc:"轻拍患者双肩，在耳边大声呼喊：你还好吗？观察有无反应。"},{title:"呼叫求助",desc:"如患者无反应，立即拨打120，并让人取来附近的AED设备。"},{title:"检查呼吸",desc:"俯身观察患者胸腹部有无起伏，判断5-10秒，不要超过10秒。"},{title:"胸外按压",desc:"双手交叠，掌根置于两乳头连线中点（胸骨下半段）。手臂伸直，垂直向下按压5-6厘米，频率100-120次/分钟。"},{title:"人工呼吸",desc:"30次按压后，开放气道（仰头抬颏法），捏住鼻子，正常吸气后包住患者口唇吹气2次，每次约1秒。"},{title:"持续循环",desc:"持续进行30:2的按压与通气循环，直到AED到达或急救人员接手。"}]},
             {id:2,title:"海姆立克急救法",category:"heimlich-card",icon:`<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`,summary:"适用于气道异物梗阻，双手环抱快速向上冲击",steps:[{title:"识别症状",desc:"患者突然无法说话、咳嗽或呼吸，双手呈V字形抓住颈部，面色发绀。"},{title:"站位准备",desc:"站在患者身后，双脚前后分开，前脚位于患者两脚之间。"},{title:"握拳定位",desc:"一手握拳，拳眼（拇指侧）对准患者肚脐上方、胸骨下方位置。"},{title:"快速冲击",desc:"另一只手包住拳头，快速向后上方用力冲击腹部。连续快速冲击5次。"},{title:"循环操作",desc:"重复冲击直到异物排出或患者失去意识（此时开始CPR）。"},{title:"婴儿处理",desc:"对于1岁以下婴儿：将婴儿面朝下放在前臂，头部低于躯干，用掌根在肩胛骨间拍击5次，翻转后胸部按压5次，交替进行。"}]},
@@ -404,7 +345,6 @@
             {id:5,title:"骨折处理",category:"fracture-card",icon:`<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`,summary:"固定伤处、避免移动是骨折急救的基本原则",steps:[{title:"保持冷静",desc:"不要惊慌，让患者保持原位，不要随意移动或试图复位骨折部位。"},{title:"呼叫救援",desc:"拨打120急救电话，说明受伤情况和具体位置。"},{title:"检查伤情",desc:"观察有无开放性伤口、畸形、异常活动。如有出血先止血包扎。"},{title:"临时固定",desc:"用木板、硬纸板、杂志或健肢作为夹板，固定骨折部位上下两个关节。固定要稳固但不要过紧。"},{title:"冷敷止痛",desc:"用冰袋或冷毛巾敷在肿胀处，每次15-20分钟，可减轻疼痛和肿胀。注意不要直接接触皮肤。"},{title:"等待救援",desc:"保持患者温暖舒适，不要给饮食（可能需要手术麻醉）。密切观察意识状态和呼吸。"}]}
         ];
 
-        // ========== 全局变量 ==========
         let map = null;
         let userLocation = null;
         let aedMarkers = [];
@@ -413,10 +353,10 @@
         let currentTab = 'map';
         let manualMode = false;
         let walkingRoute = null;
-        let geolocation = null;
+        let CAMPUS_CENTER = null;
 
-        // ========== 初始化 ==========
         document.addEventListener('DOMContentLoaded', () => {
+            CAMPUS_CENTER = new qq.maps.LatLng(39.532, 116.658);
             renderKnowledgeCards();
             initMap();
             requestUserLocation();
@@ -428,7 +368,6 @@
             document.getElementById('hospital-label').textContent = hospitalLabel;
         });
 
-        // ========== 腾讯地图初始化 ==========
         function initMap() {
             map = new qq.maps.Map(document.getElementById("map"), {
                 center: CAMPUS_CENTER,
@@ -440,7 +379,6 @@
             qq.maps.event.addListener(map, 'click', onMapClick);
         }
 
-        // 渲染AED标记
         function renderAEDMarkers() {
             aedMarkers.forEach(m => m.setMap(null));
             aedMarkers = [];
@@ -453,9 +391,7 @@
                 const marker = new qq.maps.Marker({
                     position: pos,
                     map: map,
-                    icon: new qq.maps.MarkerImage(
-                        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiI+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTQiIGZpbGw9IiNFNTM5MzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIvPjx0ZXh0IHg9IjE2IiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+KzwvdGV4dD48L3N2Zz4='
-                    )
+                    icon: new qq.maps.MarkerImage('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiI+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTQiIGZpbGw9IiNFNTM5MzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIvPjx0ZXh0IHg9IjE2IiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+KzwvdGV4dD48L3N2Zz4=')
                 });
 
                 qq.maps.event.addListener(marker, 'click', () => openAEDModal(props));
@@ -465,9 +401,12 @@
             });
         }
 
-        // ========== 定位功能 ==========
         function requestUserLocation() {
             if (!navigator.geolocation) {
+                userLocation = CAMPUS_CENTER;
+                updateUserMarker();
+                calculateNearestAED();
+                hideLoading();
                 showLocationDenied();
                 return;
             }
@@ -491,20 +430,15 @@
             );
         }
 
-        // 更新用户位置标记
         function updateUserMarker() {
             if (userMarker) userMarker.setMap(null);
-            
             userMarker = new qq.maps.Marker({
                 position: userLocation,
                 map: map,
-                icon: new qq.maps.MarkerImage(
-                    'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiI+PGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjgiIGZpbGw9IiMxOTc2RDIiLz48L3N2Zz4='
-                )
+                icon: new qq.maps.MarkerImage('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiI+PGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjgiIGZpbGw9IiMxOTc2RDIiLz48L3N2Zz4=')
             });
         }
 
-        // 计算最近AED
         function calculateNearestAED() {
             if (!userLocation) return;
             let minDist = Infinity;
@@ -527,7 +461,6 @@
             showNearestAEDPanel(Math.round(minDist));
         }
 
-        // ========== 导航功能（核心） ==========
         function navigateToAED(name) {
             if (!userLocation) {
                 alert('请先获取您的位置信息');
@@ -540,10 +473,8 @@
             const [lng, lat] = feature.geometry.coordinates;
             const endPoint = new qq.maps.LatLng(lat, lng);
 
-            // 清除旧路线
             if (walkingRoute) walkingRoute.setMap(null);
             
-            // 步行路线规划
             const walkingService = new qq.maps.WalkingService();
             walkingService.search(userLocation, endPoint, (result) => {
                 if (result.type == qq.maps.ServiceResultStatus.OK) {
@@ -556,25 +487,16 @@
                     });
                     
                     map.fitBounds(walkingRoute.getBounds());
-                    alert(`路线规划成功！\n距离：${Math.round(qq.maps.geometry.spherical.computeDistanceBetween(userLocation, endPoint))}米\n预计步行：${Math.ceil(Math.round(qq.maps.geometry.spherical.computeDistanceBetween(userLocation, endPoint))/80)}分钟`);
+                    const dist = Math.round(qq.maps.geometry.spherical.computeDistanceBetween(userLocation, endPoint));
+                    alert(`路线规划成功！\n距离：${dist}米\n预计步行：${Math.ceil(dist/80)}分钟`);
                 }
             });
         }
 
-        function navigateToNearest() {
-            if (!nearestAED) return;
-            navigateToAED(nearestAED.name);
-        }
-
-        // ========== 地图工具 ==========
-        function centerOnUser() {
-            if (userLocation) map.panTo(userLocation);
-        }
-
-        function toggleLayer() {
-            document.getElementById('layer-panel').classList.toggle('hidden');
-        }
-
+        function navigateToNearest() { if(nearestAED) navigateToAED(nearestAED.name); }
+        function centerOnUser() { if(userLocation) map.panTo(userLocation); }
+        function toggleLayer() { document.getElementById('layer-panel').classList.toggle('hidden'); }
+        
         function updateMapLayers() {
             const showAED = document.getElementById('layer-aed').checked;
             aedMarkers.forEach(m => m.setMap(showAED ? map : null));
@@ -595,7 +517,6 @@
             document.getElementById('location-denied').classList.add('hidden');
         }
 
-        // ========== AED弹窗 ==========
         function openAEDModal(props) {
             const modal = document.getElementById('aed-modal');
             const content = document.getElementById('aed-modal-content');
@@ -622,7 +543,6 @@
         function closeAEDModal() { document.getElementById('aed-modal').classList.add('hidden'); }
         function viewNearestDetail() { if(nearestAED) openAEDModal(nearestAED); }
 
-        // ========== 标签切换 ==========
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -640,7 +560,6 @@
             else if (tab === 'knowledge') document.getElementById('knowledge-page').classList.remove('page-hidden');
         }
 
-        // ========== 急救知识 ==========
         function renderKnowledgeCards() {
             const container = document.getElementById('knowledge-cards');
             container.innerHTML = KNOWLEDGE_DATA.map(k => `
@@ -671,14 +590,11 @@
         }
 
         function closeKnowledgeDetail() { document.getElementById('knowledge-detail-page').classList.add('hidden'); }
-
-        // ========== 紧急呼叫 ==========
         function openEmergencyModal() { document.getElementById('emergency-modal').classList.remove('hidden'); }
         function closeEmergencyModal() { document.getElementById('emergency-modal').classList.add('hidden'); }
         function callNumber(number) { window.location.href = `tel:${number}`; }
         function callHospital() { callNumber(document.getElementById('hospital-phone').textContent); }
 
-        // ========== 工具函数 ==========
         function hideLoading() {
             setTimeout(() => {
                 const loading = document.getElementById('loading-screen');
@@ -699,7 +615,6 @@
             document.getElementById('nearest-aed-panel').classList.remove('hidden');
         }
 
-        // 点击遮罩关闭
         document.getElementById('aed-modal').addEventListener('click', e => e.target === document.getElementById('aed-modal') && closeAEDModal());
         document.getElementById('emergency-modal').addEventListener('click', e => e.target === document.getElementById('emergency-modal') && closeEmergencyModal());
     </script>
