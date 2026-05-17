@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -359,7 +360,7 @@
     <script>
         // ========== 数据层 ==========
         // 模拟校园中心坐标 (以北京某高校为例)
-        const CAMPUS_CENTER = [39.532604,116.658787];
+        const CAMPUS_CENTER = [39.532, 116.658];
               
         // AED GeoJSON 数据
         const AED_DATA = {
@@ -856,13 +857,12 @@ function navigateToAED(name, address) {
     const dest = findAEDCoords(name);
     if (!dest) return;
 
-    // 唤起腾讯地图 App 导航（优先）
-    const url = `https://apis.map.qq.com/uri/v1/routeplan?type=walk&from=我的位置&fromcoord=${userLocation[0]},${userLocation[1]}&to=${encodeURIComponent(name)}&tocoord=${dest[0]},${dest[1]}&referer=school-aid`;
-    
-    // 尝试唤起 App
+    const fromCoord = `${userLocation[1]},${userLocation[0]}`;
+    const toCoord = `${dest[1]},${dest[0]}`;
+    const url = `https://apis.map.qq.com/uri/v1/routeplan?type=walk&from=我的位置&fromcoord=${fromCoord}&to=${encodeURIComponent(name)}&tocoord=${toCoord}&referer=school-aid`;
+
     window.location.href = url;
-    
-    // 同时在网页地图上画路线
+
     showRouteOnMap(dest);
 }
               function findAEDCoords(name) {
