@@ -656,9 +656,37 @@ function initMap() {
     aedMarkers.push(markerLayer);
 }           
 
-       function requestUserLocation() {
+      async function convertWgs84ToGcj02(lat, lng) {
+    try {
+        // 构造正确的URL
+        const url = `https://apis.map.qq.com/ws/coord/v1/translate?locations=${lat},${lng}&type=1&key=6WOBZ-EEELQ-VSD5J-BQPIQ-Q2HQ6-AWFQN`;
+        
+        // 发起请求
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        // 检查返回状态
+        if (result.status === 0) {
+            // 转换成功
+            const gcjLat = result.locations[0].lat;
+            const gcjLng = result.locations[0].lng;
+            return [gcjLat, gcjLng];
+        } else {
+            // API返回错误
+            console.error('腾讯地图坐标转换失败:', result.message);
+            throw new Error(result.message);
+        }
+    } catch (err) {
+        // 网络错误或其他异常
+        console.error('坐标转换请求失败:', err);
+        // 降级：返回原始WGS84坐标，保证功能可用
+        return [lat, lng];
+    }
+}
+
+// 修正后的定位函数（必须加async）
+async function requestUserLocation() {
     if (!navigator.geolocation) {
-        // 不支持定位，用校园中心兜底
         userLocation = CAMPUS_CENTER;
         updateUserMarker();
         calculateNearestAED();
@@ -668,25 +696,36 @@ function initMap() {
     }
 
     navigator.geolocation.getCurrentPosition(
-        (pos) => {
-            userLocation = [pos.coords.latitude, pos.coords.longitude];
+        // 定位成功回调（必须加async）
+        async (pos) => {
+            // 1. 获取原始WGS84坐标
+            const wgsLat = pos.coords.latitude;
+            const wgsLng = pos.coords.longitude;
+            
+            // 2. 调用WebService转换坐标
+            const gcjCoords = await convertWgs84ToGcj02(wgsLat, wgsLng);
+            
+            // 3. 存入全局变量
+            userLocation = gcjCoords;
+            
+            // 4. 后续逻辑不变
             updateUserMarker();
             calculateNearestAED();
             hideLoading();
-            document.getElementById('location-status').innerHTML = '<div class="w-2 h-2 bg-green-500 rounded-full"></div><span>已定位</span>';
-            
-            // 新增：地图中心移到用户位置（替代 map.setView(...)）
+            document.getElementById('location-status').innerHTML = 
+                '<div class="w-2 h-2 bg-green-500 rounded-full"></div><span>已定位</span>';
             map.setCenter(new TMap.LatLng(userLocation[0], userLocation[1]));
         },
+        // 定位失败回调
         (err) => {
-            // 定位失败，用校园中心兜底
-            userLocation = [39.532, 116.658];  // 直接写死
+            userLocation = [39.532, 116.658];
             updateUserMarker();
             calculateNearestAED();
             hideLoading();
             showLocationDenied();
         },
-        { enableHighAccuracy: true, timeout: 5000 }
+        // 定位配置
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
     );
 }
        function updateUserMarker() {
