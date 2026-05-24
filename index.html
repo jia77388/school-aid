@@ -31,8 +31,10 @@
             font-family: 'Noto Sans SC', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-        #map{
-    touch-action: manipulation;
+        #map {
+    z-index: 1;
+    touch-action: manipulation; /* 禁止双击缩放、优化触摸 */
+    user-select: none;          /* 防止长按选中文字干扰 */
 }
         
         body {
@@ -617,10 +619,22 @@ function initMap() {
 
     // 渲染 AED 标记
     renderAEDMarkers();
- // 地图点击事件（手动选择位置模式）
-            map.on('click', onMapClick);
+ 
 
 }
+// 统一处理函数
+function handleAEDClick(e) {
+    // 阻止事件冒泡到地图，避免冲突
+    if (e && e.stopPropagation) e.stopPropagation();
+    openAEDModal(props);
+}
+
+// 同时绑定 click + touchstart
+marker.on('click', handleAEDClick);
+marker.on('touchstart', (e) => {
+    e.preventDefault();   // 阻止默认拖拽/缩放
+    handleAEDClick(e);
+});
                                          
         function renderAEDMarkers() {
     // 清除已有标记
@@ -744,7 +758,7 @@ const [gcjLat, gcjLng] = convertWgs84ToGcj02(wgsLat, wgsLng);
             showLocationDenied();
         },
         // 定位配置
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
         
         
     );
@@ -757,14 +771,6 @@ const [gcjLat, gcjLng] = convertWgs84ToGcj02(wgsLat, wgsLng);
 
     userMarker = new TMap.MultiMarker({
         map: map,
-        styles: {
-            'user': new TMap.MarkerStyle({
-                width: 16,
-                height: 16,
-                anchor: { x: 8, y: 8 },
-                color: '#1976D2' // 蓝色定位点
-            })
-        },
         geometries: [{
             id: 'user',
             position: new TMap.LatLng(userLocation[0], userLocation[1]),
