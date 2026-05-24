@@ -656,10 +656,10 @@ marker.on('touchstart', (e) => {
         map: map,
         styles: {
             'aed': new TMap.MarkerStyle({
-                width: 12,
-                height: 12,
-                anchor: { x: 6, y: 6 },
-                src: 'https://placehold.co/32x32/E53935/FFFFFF?text=%2B' // 换成你的 AED 图标
+                width: 10,
+                height: 10,
+                anchor: { x: 5, y: 5 },
+                src: 'https://placehold.co/32x32/E53935/FFFFFF?text=%2B' 
             })
         },
         geometries: geometries.map(g => ({ ...g, styleId: 'aed' }))
