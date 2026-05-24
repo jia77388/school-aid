@@ -31,6 +31,9 @@
             font-family: 'Noto Sans SC', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
+        #map{
+    touch-action: manipulation;
+}
         
         body {
             overscroll-behavior: none;
@@ -639,9 +642,9 @@ function initMap() {
         map: map,
         styles: {
             'aed': new TMap.MarkerStyle({
-                width: 32,
-                height: 32,
-                anchor: { x: 16, y: 16 },
+                width: 48,
+                height: 48,
+                anchor: { x: 24, y: 24 },
                 src: 'https://placehold.co/32x32/E53935/FFFFFF?text=%2B' // 换成你的 AED 图标
             })
         },
