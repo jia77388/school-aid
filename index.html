@@ -649,10 +649,14 @@ function initMap() {
     });
 
     // 点击事件
-    markerLayer.on('click', (e) => {
-        openAEDModal(e.geometry.properties);
-    });
-
+    function handleClick(e) {
+    openAEDModal(e.geometry.properties);
+}
+markerLayer.on('click', handleClick);
+markerLayer.on('touchstart', (e) => {
+  e.preventDefault();
+  handleClick(e);
+});
     aedMarkers.push(markerLayer);
 }           
 
