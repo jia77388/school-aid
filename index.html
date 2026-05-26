@@ -380,7 +380,7 @@
                         description: "位于主办公楼1楼一楼大厅，红色AED标识盒内，24小时可取用", 
                         campus: "本部校区", 
                         hours: "全天候开放", 
-                        photo: "https://s41.ax1x.com/2026/05/24/pm9dRjf.jpg" 
+                        photo: "https://s41.ax1x.com/2026/05/25/pmCrRVf.jpg" 
                     },
                     geometry: { type: "Point", coordinates: [116.660493, 39.53223] }
                 },
@@ -393,7 +393,7 @@
                         description: "位于启智楼(第一教学楼)1楼西侧一楼大厅，红色AED标识盒内，24小时可取用", 
                         campus: "本部校区", 
                         hours: "全天候开放", 
-                        photo: "https://s41.ax1x.com/2026/05/24/pm9ww2q.jpg" 
+                        photo: "https://s41.ax1x.com/2026/05/25/pmCrdUO.jpg" 
                     },
                     geometry: { type: "Point", coordinates: [116.660303, 39.533389] }
                 },
@@ -406,7 +406,7 @@
                         description: "位于大学生活动中心室外广场遮阳棚下方，红色AED标识盒内，24小时可取用", 
                         campus: "本部校区", 
                         hours: "全天候开放", 
-                        photo: "https://s41.ax1x.com/2026/05/24/pm9wDMV.jpg" 
+                        photo: "https://s41.ax1x.com/2026/05/25/pmCrWa8.jpg" 
                     },
                     geometry: { type: "Point", coordinates: [116.662194, 39.534048] }
                 },
@@ -419,7 +419,7 @@
                         description: "位于明德楼2楼二楼大厅，红色AED标识盒内，24小时可取用", 
                         campus: "本部校区", 
                         hours: "全天候开放", 
-                        photo: "https://s41.ax1x.com/2026/05/24/pm9w6ZF.jpg" 
+                        photo: "https://s41.ax1x.com/2026/05/25/pmCrfIS.jpg" 
                     },
                     geometry: { type: "Point", coordinates: [116.660108, 39.535279] }
                 },
@@ -432,7 +432,7 @@
                         description: "位于学生4号公寓1楼一楼东侧大厅，红色AED标识盒内，24小时可取用", 
                         campus: "本部校区", 
                         hours: "全天候开放", 
-                        photo: "https://s41.ax1x.com/2026/05/24/pm9wca4.jpg" 
+                        photo: "https://s41.ax1x.com/2026/05/25/pmCr4Pg.jpg" 
                     },
                     geometry: { type: "Point", coordinates: [116.658548, 39.533136] }
                 },
@@ -445,7 +445,7 @@
                         description: "位于学生10号公寓1楼一楼中间大厅，红色AED标识盒内，24小时可取用", 
                         campus: "本部校区", 
                         hours: "全天候开放", 
-                        photo: "https://s41.ax1x.com/2026/05/24/pm9wWGR.jpg" 
+                        photo: "https://s41.ax1x.com/2026/05/25/pmCroxs.jpg" 
                     },
                     geometry: { type: "Point", coordinates: [116.658194, 39.535694] }
                 },
@@ -458,7 +458,7 @@
                         description: "位于工程食堂室外最北侧电梯下方，红色AED标识盒内，24小时可取用", 
                         campus: "本部校区", 
                         hours: "全天候开放", 
-                        photo: "https://s41.ax1x.com/2026/05/24/pm9wfR1.jpg" 
+                        photo: "https://s41.ax1x.com/2026/05/25/pmCrHrq.jpg" 
                     },
                     geometry: { type: "Point", coordinates: [116.657579, 39.533281] }
                 },
@@ -471,7 +471,7 @@
                         description: "位于操场室外主席台下楼梯旁，红色AED标识盒内，24小时可取用", 
                         campus: "本部校区", 
                         hours: "全天候开放", 
-                        photo: "https://placehold.co/400x300/e53935/ffffff?text=AED_CPPU_008" 
+                        photo: "https://s41.ax1x.com/2026/05/25/pmCrLZV.jpg" 
                     },
                     geometry: { type: "Point", coordinates: [116.653809, 39.533221] }
                 },
@@ -656,10 +656,10 @@ marker.on('touchstart', (e) => {
         map: map,
         styles: {
             'aed': new TMap.MarkerStyle({
-                width: 10,
-                height: 10,
-                anchor: { x: 5, y: 5 },
-                src: 'https://placehold.co/32x32/E53935/FFFFFF?text=%2B' 
+                width: 12,
+                height: 12,
+                anchor: { x: 6, y: 6 },
+                src: 'https://placehold.co/32x32/E53935/FFFFFF?text=%2B' // 换成你的 AED 图标
             })
         },
         geometries: geometries.map(g => ({ ...g, styleId: 'aed' }))
