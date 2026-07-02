@@ -341,6 +341,13 @@
                 <span class="text-xs font-bold">急救知识</span>
             </button>
 
+            <button onclick="toggleAddMarkerMode()" id="nav-add-marker" class="nav-btn flex flex-col items-center gap-1 py-2 px-5 rounded-xl transition-all text-gray-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span class="text-xs font-bold">添加标注</span>
+            </button>
+
             <button onclick="openEmergencyModal()" id="nav-emergency" class="flex flex-col items-center -mt-8">
                 <div class="emergency-btn w-18 h-18 bg-gradient-to-br from-emergency to-red-500 rounded-full shadow-2xl shadow-red-300 flex items-center justify-center border-4 border-white card-press">
                     <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -611,11 +618,12 @@
         let customMarkerLayer = null;
         let currentTab = 'map';
         let manualMode = false;
+        let addMarkerMode = false;
 
         // ========== 初始化 ==========
         document.addEventListener('DOMContentLoaded', () => {
-            initMap();
             loadCustomMarkers();
+            initMap();
             requestUserLocation();
             
             setTimeout(() => {
@@ -920,6 +928,27 @@ function updateUserMarker() {
 }
 
 function onMapClick(e) {
+    if (addMarkerMode) {
+        const lat = e.latLng.getLat();
+        const lng = e.latLng.getLng();
+        const name = prompt('请输入标注内容：');
+        
+        if (name && name.trim()) {
+            const newMarker = {
+                id: 'marker_' + Date.now(),
+                lat: lat,
+                lng: lng,
+                name: name.trim()
+            };
+            customMarkers.push(newMarker);
+            saveCustomMarkers();
+            renderCustomMarkers();
+        }
+        
+        toggleAddMarkerMode();
+        return;
+    }
+    
     if (!manualMode) return;
     
     userLocation = [e.latLng.getLat(), e.latLng.getLng()];
@@ -933,6 +962,20 @@ function enableManualSelect() {
     manualMode = true;
     alert('请在地图上点击选择您的位置');
     document.getElementById('location-denied').classList.add('hidden');
+}
+
+function toggleAddMarkerMode() {
+    addMarkerMode = !addMarkerMode;
+    const btn = document.getElementById('nav-add-marker');
+    
+    if (addMarkerMode) {
+        btn.classList.add('nav-active');
+        btn.classList.remove('text-gray-400');
+        alert('请在地图上点击位置添加标注');
+    } else {
+        btn.classList.remove('nav-active');
+        btn.classList.add('text-gray-400');
+    }
 }
 
      // WGS84 转 GCJ02 本地算法（中国大陆通用）
