@@ -325,6 +325,12 @@
                     <input type="text" id="aed-address" placeholder="详细地址（如：XX楼-1楼-大厅）" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-700" maxlength="100">
                     <input type="text" id="aed-desc" placeholder="设备描述（如：红色AED标识盒内）" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-700" maxlength="100">
                     
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="number" id="aed-latitude" placeholder="纬度（如：39.532）" step="0.000001" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-700">
+                        <input type="number" id="aed-longitude" placeholder="经度（如：116.658）" step="0.000001" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-700">
+                    </div>
+                    <p class="text-xs text-gray-400">不填写经纬度则使用点击地图的位置</p>
+                    
                     <div>
                         <label class="block text-sm text-gray-500 mb-2">现场照片（可选）</label>
                         <div id="aed-photo-preview" class="hidden relative rounded-xl overflow-hidden mb-2">
@@ -422,8 +428,8 @@
         // 模拟校园中心坐标 (以北京某高校为例)
         const CAMPUS_CENTER = [39.532, 116.658];
               
-        // AED GeoJSON 数据
-        const AED_DATA = {
+        // 原始AED GeoJSON数据（只读）
+        const ORIGINAL_AED_DATA = {
             type: "FeatureCollection",
             features: [
                 {
@@ -661,6 +667,7 @@
         let customMarkers = [];
         let customMarkerLayer = null;
         let customAEDData = [];
+        let editableAEDData = null;
         let currentTab = 'map';
         let manualMode = false;
         let addMarkerMode = false;
@@ -669,6 +676,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadCustomMarkers();
             loadCustomAEDData();
+            initEditableAEDData();
             initMap();
             requestUserLocation();
             
@@ -705,7 +713,7 @@ function fitMapToCampus() {
     let minLat = Infinity, maxLat = -Infinity;
     let minLng = Infinity, maxLng = -Infinity;
 
-    AED_DATA.features.forEach(feature => {
+    editableAEDData.features.forEach(feature => {
         const [lng, lat] = feature.geometry.coordinates;
         minLat = Math.min(minLat, lat);
         maxLat = Math.max(maxLat, lat);
@@ -775,7 +783,7 @@ function fitMapToCampus() {
         aedMarkers = [];
     }
 
-    const builtInGeometries = AED_DATA.features.map(feature => {
+    const builtInGeometries = editableAEDData.features.map(feature => {
         const coords = feature.geometry.coordinates;
         return {
             id: feature.properties.id,
@@ -910,7 +918,7 @@ function findNearestAED() {
     let nearest = null;
     let minDistance = Infinity;
 
-    AED_DATA.features.forEach(feature => {
+    editableAEDData.features.forEach(feature => {
         const [lng, lat] = feature.geometry.coordinates;
         const distance = calculateDistance(userLocation[0], userLocation[1], lat, lng);
         if (distance < minDistance) {
@@ -1049,6 +1057,11 @@ function openMarkerInputModal() {
     aedAddress.value = '';
     aedDesc.value = '';
     
+    const aedLatitude = document.getElementById('aed-latitude');
+    const aedLongitude = document.getElementById('aed-longitude');
+    aedLatitude.value = '';
+    aedLongitude.value = '';
+    
     pendingAEDPhoto = null;
     const photoPreview = document.getElementById('aed-photo-preview');
     const photoImg = document.getElementById('aed-photo-img');
@@ -1079,6 +1092,11 @@ function confirmMarkerInput() {
     if (currentMarkerType === 'aed') {
         const aedAddress = document.getElementById('aed-address');
         const aedDesc = document.getElementById('aed-desc');
+        const aedLatitude = document.getElementById('aed-latitude');
+        const aedLongitude = document.getElementById('aed-longitude');
+        
+        const lat = parseFloat(aedLatitude.value) || pendingMarkerPosition.lat;
+        const lng = parseFloat(aedLongitude.value) || pendingMarkerPosition.lng;
         
         const newAED = {
             type: "Feature",
@@ -1093,7 +1111,7 @@ function confirmMarkerInput() {
             },
             geometry: {
                 type: "Point",
-                coordinates: [pendingMarkerPosition.lng, pendingMarkerPosition.lat]
+                coordinates: [lng, lat]
             }
         };
         
@@ -1131,6 +1149,36 @@ function loadCustomAEDData() {
 
 function saveCustomAEDData() {
     localStorage.setItem('custom_aed_data', JSON.stringify(customAEDData));
+}
+
+function initEditableAEDData() {
+    const saved = localStorage.getItem('editable_aed_data');
+    if (saved) {
+        editableAEDData = JSON.parse(saved);
+    } else {
+        editableAEDData = JSON.parse(JSON.stringify(ORIGINAL_AED_DATA));
+    }
+}
+
+function saveEditableAEDData() {
+    localStorage.setItem('editable_aed_data', JSON.stringify(editableAEDData));
+}
+
+function deleteCustomAED(aedId) {
+    if (!confirm('确定要删除这个AED设备吗？')) {
+        return;
+    }
+    
+    if (aedId.startsWith('AED_CUSTOM_')) {
+        customAEDData = customAEDData.filter(aed => aed.properties.id !== aedId);
+        saveCustomAEDData();
+    } else {
+        editableAEDData.features = editableAEDData.features.filter(aed => aed.properties.id !== aedId);
+        saveEditableAEDData();
+    }
+    
+    renderAEDMarkers();
+    closeAEDModal();
 }
 
 function handleAEDPhotoUpload(input) {
@@ -1306,6 +1354,12 @@ function convertWgs84ToGcj02(lat, lon) {
                         </svg>
                         一键导航
                     </button>
+                    <button onclick="deleteCustomAED('${props.id}')" class="px-6 py-3 bg-gray-100 text-gray-600 font-medium rounded-xl card-press flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        删除
+                    </button>
                 </div>
             `;
             
@@ -1359,11 +1413,18 @@ function navigateToAED(aedName) {
     window.open(navUrl, '_blank');
 }
               function findAEDCoords(name) {
-            const feature = AED_DATA.features.find(f => f.properties.name === name);
+            const feature = editableAEDData.features.find(f => f.properties.name === name);
             if (feature) {
                 const coords = feature.geometry.coordinates;
                 return [coords[0], coords[1]];
             }
+            
+            const customFeature = customAEDData.find(f => f.properties.name === name);
+            if (customFeature) {
+                const coords = customFeature.geometry.coordinates;
+                return [coords[0], coords[1]];
+            }
+            
             return null;
         }
 
