@@ -870,7 +870,9 @@
         let customMarkerLayer = null;
         let currentTab = 'map';
         let manualMode = false;
-        let aedModalOpenedAt = 0;
+        let aedTapLockId = null;
+        let aedTapLockAt = 0;
+        let aedSwallowClickUntil = 0;
 
         // ========== 初始化 ==========
         document.addEventListener('DOMContentLoaded', () => {
@@ -997,17 +999,26 @@ function fitMapToCampus() {
         geometries: geometries.map(g => ({ ...g, styleId: 'aed' }))
     });
 
-    markerLayer.on('click', (e) => {
-        if (e.geometry && e.geometry.properties) {
-            openAEDModal(e.geometry.properties);
-        }
-    });
-    
-    markerLayer.on('touchstart', (e) => {
-        if (e.geometry && e.geometry.properties) {
-            openAEDModal(e.geometry.properties);
-        }
-    });
+    // 只在触摸结束/点击后再弹出详情，避免在 touchstart 阶段插入全屏遮罩，
+    // 导致地图手势无法正常结束，手机上出现“只能打开一次”的问题
+    const handleAedMarkerTap = (e, fromTouch) => {
+        const props = e && e.geometry && e.geometry.properties;
+        if (!props) return;
+
+        // 同一次触摸会先后触发 touchend 和 click，这里去重
+        const now = Date.now();
+        if (props.id === aedTapLockId && now - aedTapLockAt < 600) return;
+        aedTapLockId = props.id;
+        aedTapLockAt = now;
+
+        // 触摸弹窗后浏览器会补发一个 click，落在刚弹出的面板上可能误触按钮，需忽略
+        if (fromTouch) aedSwallowClickUntil = now + 400;
+
+        openAEDModal(props);
+    };
+
+    markerLayer.on('touchend', (e) => handleAedMarkerTap(e, true));
+    markerLayer.on('click', (e) => handleAedMarkerTap(e, false));
 
     aedMarkers.push(markerLayer);
 }           
@@ -1298,11 +1309,13 @@ function convertWgs84ToGcj02(lat, lon) {
             `;
             
             modal.classList.remove('hidden');
-            aedModalOpenedAt = Date.now();
         }
 
         function closeAEDModal() {
             document.getElementById('aed-modal').classList.add('hidden');
+            // 关闭后立即解除去重锁定，方便马上再次打开同一台设备
+            aedTapLockId = null;
+            aedTapLockAt = 0;
         }
 
         function openPhotoViewer(photoUrl) {
@@ -1515,15 +1528,26 @@ function navigateToAED(aedName) {
         }
 
         // 点击遮罩关闭弹窗
-        document.getElementById('aed-modal').addEventListener('click', (e) => {
-            // 弹窗刚打开时，手机浏览器会为同一次触摸补发一个 click，
-            // 此时它可能落在遮罩或弹窗内容上，直接吞掉，避免弹窗瞬间被关闭或误触按钮
-            if (Date.now() - aedModalOpenedAt < 400) {
+        // 只有“按下位置就是遮罩”的点击才关闭，避免地图上触摸弹窗后补发的 click 把弹窗瞬间关掉
+        const aedModalEl = document.getElementById('aed-modal');
+        let aedBackdropPressed = false;
+
+        const markAedBackdropPress = (e) => {
+            aedBackdropPressed = (e.target === aedModalEl);
+        };
+
+        aedModalEl.addEventListener('touchstart', markAedBackdropPress, { passive: true });
+        aedModalEl.addEventListener('mousedown', markAedBackdropPress);
+        aedModalEl.addEventListener('click', (e) => {
+            // 触摸打开弹窗后补发的 click 直接忽略，避免误触面板上的按钮
+            if (Date.now() < aedSwallowClickUntil) {
+                aedSwallowClickUntil = 0;
                 e.stopPropagation();
                 e.preventDefault();
                 return;
             }
-            if (e.target === document.getElementById('aed-modal')) closeAEDModal();
+            if (aedBackdropPressed && e.target === aedModalEl) closeAEDModal();
+            aedBackdropPressed = false;
         }, true);
 
         document.getElementById('emergency-modal').addEventListener('click', (e) => {
