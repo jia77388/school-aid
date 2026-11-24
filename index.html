@@ -870,6 +870,7 @@
         let customMarkerLayer = null;
         let currentTab = 'map';
         let manualMode = false;
+        let aedModalOpenedAt = 0;
 
         // ========== 初始化 ==========
         document.addEventListener('DOMContentLoaded', () => {
@@ -981,14 +982,15 @@ function fitMapToCampus() {
         };
     });
 
-    const aedIcon = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj48Y2lyY2xlIGN4PSIxMCIgY3k9IjEwIiByPSI3IiBmaWxsPSIjMDA4NGNmIi8+PC9zdmc+';
+    // 图标画成 32x32，圆点仍是 14px，外圈透明留白只用于扩大手指点击范围
+    const aedIcon = "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='32'%20height='32'%20viewBox='0%200%2032%2032'%3E%3Ccircle%20cx='16'%20cy='16'%20r='7'%20fill='%230084cf'/%3E%3C/svg%3E";
     const markerLayer = new TMap.MultiMarker({
         map: map,
         styles: {
             'aed': new TMap.MarkerStyle({
-                width: 18,
-                height: 18,
-                anchor: { x: 9, y: 9 },
+                width: 32,
+                height: 32,
+                anchor: { x: 16, y: 16 },
                 src: aedIcon
             })
         },
@@ -1296,6 +1298,7 @@ function convertWgs84ToGcj02(lat, lon) {
             `;
             
             modal.classList.remove('hidden');
+            aedModalOpenedAt = Date.now();
         }
 
         function closeAEDModal() {
@@ -1513,8 +1516,15 @@ function navigateToAED(aedName) {
 
         // 点击遮罩关闭弹窗
         document.getElementById('aed-modal').addEventListener('click', (e) => {
+            // 弹窗刚打开时，手机浏览器会为同一次触摸补发一个 click，
+            // 此时它可能落在遮罩或弹窗内容上，直接吞掉，避免弹窗瞬间被关闭或误触按钮
+            if (Date.now() - aedModalOpenedAt < 400) {
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            }
             if (e.target === document.getElementById('aed-modal')) closeAEDModal();
-        });
+        }, true);
 
         document.getElementById('emergency-modal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('emergency-modal')) closeEmergencyModal();
