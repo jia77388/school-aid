@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -11,6 +10,7 @@
 <!-- 新版 GL JS API -->
 <script src="https://map.qq.com/api/gljs?v=1.exp&key=6WOBZ-EEELQ-VSD5J-BQPIQ-Q2HQ6-AWFQN"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -105,6 +105,16 @@
         .bleeding-card { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
         .heatstroke-card { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
         .fracture-card { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+        .nosebleed-card { background: linear-gradient(135deg, #e66465 0%, #9198e5 100%); }
+        .sprain-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .burn-card { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
+        .faint-card { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .seizure-card { background: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%); }
+        .hypoglycemia-card { background: linear-gradient(135deg, #f5af19 0%, #f12711 100%); }
+        .allergy-card { background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%); }
+        .drowning-card { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
+        .shock-card { background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 100%); }
+        .eye-card { background: linear-gradient(135deg, #667eea 0%, #a18cd1 100%); }
         
         .page-hidden {
             display: none;
@@ -148,6 +158,53 @@
             background: rgba(229, 57, 53, 0.1);
             color: #E53935;
         }
+        
+        /* AI智能体聊天样式 */
+        .chat-container { display: flex; flex-direction: column; height: 100%; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .chat-bubble { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.6; word-break: break-word; animation: fade-in 0.3s ease; }
+        @keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .chat-bubble.user { align-self: flex-end; background: linear-gradient(135deg, #E53935, #FF5252); color: white; border-bottom-right-radius: 4px; }
+        .chat-bubble.ai { align-self: flex-start; background: #f1f5f9; color: #1e293b; border-bottom-left-radius: 4px; }
+        .chat-bubble.ai .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .quick-action-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; background: white; border: 1px solid #e2e8f0; border-radius: 20px; font-size: 12px; font-weight: 600; color: #E53935; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .quick-action-btn:hover { background: #fef2f2; border-color: #fca5a5; }
+        .quick-action-btn:active { transform: scale(0.95); }
+        .chat-typing { align-self: flex-start; display: flex; gap: 4px; padding: 12px 16px; background: #f1f5f9; border-radius: 16px; border-bottom-left-radius: 4px; }
+        .typing-dot { width: 8px; height: 8px; background: #94a3b8; border-radius: 50%; animation: typing-bounce 1.4s infinite; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing-bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-8px); } }
+        .chat-input-area { padding: 12px 16px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; align-items: flex-end; }
+        .chat-input { flex: 1; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 24px; font-size: 15px; outline: none; resize: none; min-height: 44px; max-height: 120px; line-height: 1.5; transition: border-color 0.2s; }
+        .chat-input:focus { border-color: #E53935; }
+        .chat-send-btn { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #E53935, #FF5252); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3); }
+        .chat-send-btn:active { transform: scale(0.9); }
+        .chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .chat-stop-btn { width: 36px; height: 36px; border-radius: 50%; background: #ef4444; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; animation: pulse-stop 1.5s infinite; }
+        @keyframes pulse-stop { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); } 50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); } }
+        .markdown-body { font-size: 14px; line-height: 1.7; }
+        .markdown-body p { margin: 0 0 8px 0; }
+        .markdown-body p:last-child { margin-bottom: 0; }
+        .markdown-body ul, .markdown-body ol { margin: 4px 0; padding-left: 20px; }
+        .markdown-body li { margin: 2px 0; }
+        .markdown-body code { background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+        .markdown-body pre { background: #1e293b; color: #e2e8f0; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 8px 0; }
+        .markdown-body pre code { background: none; padding: 0; color: inherit; }
+        .markdown-body strong { font-weight: 700; }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 { margin: 12px 0 6px 0; font-weight: 700; }
+        .markdown-body h1 { font-size: 1.2em; }
+        .markdown-body h2 { font-size: 1.1em; }
+        .markdown-body h3 { font-size: 1em; }
+        .markdown-body blockquote { border-left: 3px solid #e53935; padding-left: 12px; margin: 8px 0; color: #64748b; }
+        .ai-welcome { text-align: center; padding: 40px 20px; }
+        .ai-welcome-icon { width: 72px; height: 72px; margin: 0 auto 16px; background: linear-gradient(135deg, #E53935, #FF5252); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(229, 57, 53, 0.25); }
+        .suggested-questions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
+        .suggested-chip { padding: 8px 16px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 20px; font-size: 13px; color: #E53935; cursor: pointer; transition: all 0.2s; }
+        .suggested-chip:hover { background: #fee2e2; }
+        .suggested-chip:active { transform: scale(0.95); }
+        #map { z-index: 1; touch-action: manipulation; user-select: none; width: 100%; height: 100%; min-height: 400px; }
+        #main-content { min-height: 0; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 h-screen flex flex-col overflow-hidden">
@@ -211,6 +268,8 @@
             <div class="p-4">
                 <h2 class="text-xl font-black mb-1">急救知识</h2>
                 <p class="text-sm text-gray-500 mb-4">关键时刻能救命的基础急救技能</p>
+
+                <div class="relative mb-4"><input type="text" id="knowledge-search" placeholder="搜索急救知识..." class="w-full px-4 py-3 pl-10 bg-white border-2 border-gray-200 rounded-xl text-sm outline-none focus:border-emergency transition-colors" oninput="searchKnowledge()"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
                 
                 <div id="knowledge-cards" class="grid grid-cols-1 gap-4">
                     <!-- 动态生成卡片 -->
@@ -230,6 +289,34 @@
             </div>
             <div id="detail-content" class="p-4 pb-20">
                 <!-- 动态生成内容 -->
+            </div>
+        </div>
+
+        <!-- AI智能体页 -->
+        <div id="ai-page" class="absolute inset-0 bg-white overflow-hidden page-hidden" style="display:none">
+            <div class="sticky top-0 bg-white z-10 px-4 py-3 flex items-center justify-between shadow-sm border-b border-gray-100">
+                <h3 class="text-base font-black text-gray-800">AI急救顾问</h3>
+                <button onclick="newConversation()" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full font-medium transition-colors">+ 新对话</button>
+            </div>
+            <div id="ai-chat-messages" class="chat-messages">
+                <div class="ai-welcome">
+                    <div class="ai-welcome-icon">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                    </div>
+                    <h3 class="text-lg font-black text-gray-800 mb-1">AI急救顾问</h3>
+                    <p class="text-sm text-gray-500">基于专业知识库，为您提供急救指导</p>
+                    <div class="suggested-questions">
+                        <span class="suggested-chip" data-question="有人突然倒地不醒，我该怎么办？">有人倒地不醒怎么办？</span>
+                        <span class="suggested-chip" data-question="如何进行心肺复苏？">如何进行心肺复苏？</span>
+                        <span class="suggested-chip" data-question="吃东西噎住了怎么处理？">吃东西噎住了怎么办？</span>
+                        <span class="suggested-chip" data-question="有人中暑了应该怎么做？">有人中暑了怎么做？</span>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <button id="ai-stop-btn" class="chat-stop-btn" onclick="stopConversation()" style="display:none" title="停止生成"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg></button>
+                <textarea id="ai-chat-input" class="chat-input" placeholder="请描述您遇到的紧急情况..." rows="1" onkeydown="handleChatKey(event)"></textarea>
+                <button id="ai-send-btn" class="chat-send-btn" onclick="sendMessage()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg></button>
             </div>
         </div>
     </main>
@@ -309,55 +396,14 @@
         <img id="photo-viewer-img" src="" alt="现场照片" class="max-w-[90%] max-h-[90%] object-contain rounded-lg shadow-2xl">
     </div>
 
-    <!-- 标注输入对话框 -->
-    <div id="marker-input-modal" class="fixed inset-0 bg-black/60 z-[70] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl modal-enter shadow-2xl max-h-[80vh] overflow-y-auto">
-            <div class="p-5">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">添加标注</h3>
-                
-                <div class="flex gap-2 mb-4">
-                    <button onclick="setMarkerType('normal')" id="marker-type-normal" class="flex-1 py-2 px-3 bg-red-50 text-red-600 rounded-lg font-medium card-press border border-red-200">普通标注</button>
-                    <button onclick="setMarkerType('aed')" id="marker-type-aed" class="flex-1 py-2 px-3 bg-gray-50 text-gray-500 rounded-lg font-medium card-press border border-gray-200">新增AED</button>
-                </div>
-                
-                <input type="text" id="marker-input" placeholder="请输入标注内容" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-700 mb-3" maxlength="50">
-                
-                <div id="aed-fields" class="hidden space-y-3">
-                    <input type="text" id="aed-address" placeholder="详细地址（如：XX楼-1楼-大厅）" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-700" maxlength="100">
-                    <input type="text" id="aed-desc" placeholder="设备描述（如：红色AED标识盒内）" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-700" maxlength="100">
-                    
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="number" id="aed-latitude" placeholder="纬度（如：39.532）" step="0.000001" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-700">
-                        <input type="number" id="aed-longitude" placeholder="经度（如：116.658）" step="0.000001" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-700">
-                    </div>
-                    <p class="text-xs text-gray-400">不填写经纬度则使用点击地图的位置</p>
-                    
-                    <div>
-                        <label class="block text-sm text-gray-500 mb-2">现场照片（可选）</label>
-                        <div id="aed-photo-preview" class="hidden relative rounded-xl overflow-hidden mb-2">
-                            <img id="aed-photo-img" src="" class="w-full h-auto max-h-[150px] object-cover">
-                            <button onclick="removeAEDPhoto()" class="absolute top-2 right-2 w-8 h-8 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center card-press transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <label for="aed-photo-input" class="flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-gray-500 hover:border-red-300 hover:text-red-500 transition-colors card-press cursor-pointer">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            <span>点击上传照片</span>
-                        </label>
-                        <input type="file" id="aed-photo-input" accept="image/*" class="hidden" onchange="handleAEDPhotoUpload(this)">
-                    </div>
-                </div>
-            </div>
-            <div class="flex border-t border-gray-100">
-                <button onclick="cancelMarkerInput()" class="flex-1 py-3 text-gray-600 font-medium card-press">取消标注</button>
-                <div class="w-px bg-gray-100"></div>
-                <button onclick="confirmMarkerInput()" class="flex-1 py-3 text-red-600 font-bold card-press">确认添加</button>
-            </div>
-        </div>
+    <!-- 图片查看弹窗 -->
+    <div id="image-viewer-modal" class="fixed inset-0 bg-black/90 z-[60] hidden flex items-center justify-center">
+        <button onclick="closeImageViewer()" class="absolute top-4 right-4 w-12 h-12 bg-white/20 hover:bg-white/30 text-white rounded-full flex items-center justify-center card-press transition-colors z-10">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        <img id="image-viewer-img" src="" alt="图片" class="max-w-[90%] max-h-[90%] object-contain rounded-lg shadow-2xl">
     </div>
 
     <!-- 定位权限拒绝提示 -->
@@ -391,13 +437,15 @@
                 </svg>
                 <span class="text-xs font-bold">急救知识</span>
             </button>
-
-            <button onclick="toggleAddMarkerMode()" id="nav-add-marker" class="nav-btn flex flex-col items-center gap-1 py-2 px-5 rounded-xl transition-all text-gray-400">
+            
+            <button onclick="openImageViewer()" id="nav-image" class="nav-btn flex flex-col items-center gap-1 py-2 px-5 rounded-xl transition-all text-gray-400">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
-                <span class="text-xs font-bold">添加标注</span>
+                <span class="text-xs font-bold">图片</span>
             </button>
+
+            <button onclick="switchTab('ai')" id="nav-ai" class="nav-btn flex flex-col items-center gap-1 py-2 px-5 rounded-xl transition-all text-gray-400"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg><span class="text-xs font-bold">AI助手</span></button>
 
             <button onclick="openEmergencyModal()" id="nav-emergency" class="flex flex-col items-center -mt-8">
                 <div class="emergency-btn w-18 h-18 bg-gradient-to-br from-emergency to-red-500 rounded-full shadow-2xl shadow-red-300 flex items-center justify-center border-4 border-white card-press">
@@ -429,8 +477,8 @@
         // 模拟校园中心坐标 (以北京某高校为例)
         const CAMPUS_CENTER = [39.532, 116.658];
               
-        // 原始AED GeoJSON数据（只读）
-        const ORIGINAL_AED_DATA = {
+        // AED GeoJSON 数据
+        const AED_DATA = {
             type: "FeatureCollection",
             features: [
                 {
@@ -657,6 +705,159 @@
                     { title: "等待救援", desc: "保持患者温暖舒适，不要给饮食（可能需要手术麻醉）。密切观察意识状态和呼吸。" }
                 ]
             }
+,
+            {
+                id: 6,
+                title: "鼻出血处理",
+                category: "nosebleed-card",
+                icon: `<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7 7-7z"/></svg>`,
+                summary: "校园常见问题，低头捏鼻而非仰头",
+                steps: [
+                    { title: "保持镇静", desc: "让学生坐下，头部稍向前倾，避免血液流向喉咙引起恶心。" },
+                    { title: "捏鼻翼", desc: "用拇指和食指捏住两侧鼻翼（软的部分），持续压迫10-15分钟。" },
+                    { title: "冷敷止血", desc: "可用冰袋或冷毛巾敷在鼻梁和前额，帮助血管收缩。" },
+                    { title: "张口呼吸", desc: "让学生用嘴呼吸，不要说话或吞咽。" },
+                    { title: "避免仰头", desc: "切勿仰头！仰头会让血液倒流至咽喉，可能引起呛咳或呕吐。" },
+                    { title: "就医指征", desc: "如压迫20分钟仍不止血、反复出血或伴有头部外伤，应立即就医。" }
+                ]
+            },
+            {
+                id: 7,
+                title: "扭伤与拉伤处理",
+                category: "sprain-card",
+                icon: `<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>`,
+                summary: "遵循RICE原则：休息、冰敷、加压、抬高",
+                steps: [
+                    { title: "立即休息", desc: "停止活动，让受伤部位休息，避免负重和行走。" },
+                    { title: "冰敷处理", desc: "用冰袋或冷毛巾敷在伤处，每2-3小时一次，每次15-20分钟。用毛巾包裹冰袋。" },
+                    { title: "加压包扎", desc: "用弹性绷带从远心端向近心端包扎，松紧适度。注意观察末梢血运。" },
+                    { title: "抬高患肢", desc: "将受伤肢体抬高至心脏水平以上，有助于减轻肿胀。" },
+                    { title: "避免热敷", desc: "伤后48小时内禁止热敷、按摩或涂抹活血药物，会加重肿胀。" },
+                    { title: "及时就医", desc: "如疼痛剧烈、无法承重、关节明显畸形或48小时后无好转，应到医院检查。" }
+                ]
+            },
+            {
+                id: 8,
+                title: "烫伤与烧伤处理",
+                category: "burn-card",
+                icon: `<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/></svg>`,
+                summary: "冲脱泡盖送——烧烫伤急救五字诀",
+                steps: [
+                    { title: "冷水冲洗", desc: "立即用流动冷水冲洗伤处15-20分钟，降低皮肤温度，减轻损伤深度。" },
+                    { title: "脱去衣物", desc: "在冷水中小心脱去或剪开覆盖伤处的衣物。如衣物粘连皮肤，不要强行撕扯。" },
+                    { title: "冷水浸泡", desc: "将伤处浸泡在冷水中继续降温10-15分钟，缓解疼痛。" },
+                    { title: "覆盖保护", desc: "用干净的纱布或保鲜膜轻轻覆盖创面。不要涂抹牙膏、酱油等偏方！" },
+                    { title: "送医处理", desc: "出现水疱不要自行挑破。大面积烧烫伤或面部、关节处烫伤应立即就医。" },
+                    { title: "化学烧伤", desc: "如为化学试剂烧伤（实验室常见），立即用大量清水冲洗至少30分钟，同时拨打120。" }
+                ]
+            }
+,
+            {
+                id: 9,
+                title: "晕厥处理",
+                category: "faint-card",
+                icon: `<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+                summary: "平卧抬高双腿，保持通风，识别危险征兆",
+                steps: [
+                    { title: "平卧处理", desc: "立即让患者平卧，解开衣领和腰带，抬高双腿约30厘米，促进脑部供血。" },
+                    { title: "保持通风", desc: "移至通风处，确保空气流通。如在教室内，打开窗户，疏散围观人群。" },
+                    { title: "检查意识", desc: "轻拍双肩呼唤患者。如未恢复意识，检查呼吸和脉搏。" },
+                    { title: "侧卧防窒息", desc: "如有呕吐倾向，将患者头偏向一侧或侧卧，防止呕吐物误吸。" },
+                    { title: "识别危险", desc: "如晕厥伴随胸痛、心悸、严重头痛或抽搐，或5分钟内未恢复意识，立即拨打120。" },
+                    { title: "恢复后观察", desc: "恢复意识后不要立即站起，平卧休息10-15分钟。给予温水或糖水。通知家长或辅导员。" }
+                ]
+            },
+            {
+                id: 10,
+                title: "癫痫发作处理",
+                category: "seizure-card",
+                icon: `<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+                summary: "保护安全，不按压不塞物，记录发作时间",
+                steps: [
+                    { title: "保持冷静", desc: "不要惊慌。大多数癫痫发作在2-3分钟内自行停止。" },
+                    { title: "保护安全", desc: "移开周围危险物品（桌椅、尖锐物），在头部下方垫柔软物品。" },
+                    { title: "不要约束", desc: "切勿强行按住患者或试图停止抽搐，可能导致骨折。" },
+                    { title: "不要塞物", desc: "千万不要往嘴里塞任何东西（手指、毛巾、筷子），不会吞舌，塞物会造成窒息或牙齿损伤。" },
+                    { title: "记录时间", desc: "记录发作开始和结束时间。如发作超过5分钟或反复发作，立即拨打120。" },
+                    { title: "恢复期护理", desc: "发作停止后将患者转为侧卧（恢复体位），给予安抚，不要立即喂水。" }
+                ]
+            },
+            {
+                id: 11,
+                title: "低血糖处理",
+                category: "hypoglycemia-card",
+                icon: `<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>`,
+                summary: "快速补充糖分，校园常见于没吃早餐的学生",
+                steps: [
+                    { title: "识别症状", desc: "出冷汗、心慌手抖、头晕乏力、面色苍白。严重时意识模糊。" },
+                    { title: "立即补糖", desc: "如患者清醒，立即给予含糖饮料（果汁、可乐）、糖果或糖水。" },
+                    { title: "体位处理", desc: "坐下或平卧，避免站立导致晕倒。" },
+                    { title: "观察恢复", desc: "补糖后通常10-15分钟症状缓解。可给予饼干、面包维持血糖。" },
+                    { title: "识别危重", desc: "如患者昏迷或无法吞咽，不要强行喂食（有窒息风险），立即拨打120。" },
+                    { title: "通知校医", desc: "处理同时通知校医和家长。糖尿病患者可协助使用血糖仪和药物。" }
+                ]
+            }
+,
+            {
+                id: 12,
+                title: "过敏反应处理",
+                category: "allergy-card",
+                icon: `<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`,
+                summary: "识别速发型过敏，严重过敏须立即用肾上腺素并拨打120",
+                steps: [
+                    { title: "识别症状", desc: "皮肤红疹/荨麻疹、嘴唇眼睑肿胀、呼吸困难、喉咙发紧。严重时血压下降休克。" },
+                    { title: "立即停药停食", desc: "如正在进食或用药（校医室），立即停止。疑为食物过敏告知校医。" },
+                    { title: "使用肾上腺素笔", desc: "如患者有过敏史并携带肾上腺素笔，协助其在大腿外侧注射。" },
+                    { title: "拨打120", desc: "出现呼吸困难、喉咙肿胀、声音嘶哑、头晕休克，立即拨打120。" },
+                    { title: "体位管理", desc: "如呼吸困难让患者坐起；如血压下降头晕则平卧抬高双腿。" },
+                    { title: "持续观察", desc: "即使症状缓解也可能发生迟发型反应，需在医务室或医院观察至少4小时。" }
+                ]
+            },
+            {
+                id: 13,
+                title: "溺水急救",
+                category: "drowning-card",
+                icon: `<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>`,
+                summary: "先保证自身安全，清除口鼻异物后优先人工呼吸的CPR",
+                steps: [
+                    { title: "确保安全", desc: "非专业人员不要贸然下水！使用救生圈、竹竿等工具施救，同时呼救并拨打120。" },
+                    { title: "上岸评估", desc: "救上岸后立即检查意识和呼吸。轻拍双肩大声呼唤。" },
+                    { title: "清除异物", desc: "将头偏向一侧，用手指清除口鼻中泥沙水草，开放气道。" },
+                    { title: "心肺复苏", desc: "如无呼吸立即CPR：先5次人工呼吸，再进行30:2的按压通气循环。" },
+                    { title: "不必控水", desc: "不要倒挂控水，会延误CPR时机。肺部进水量少，关键是恢复呼吸循环。" },
+                    { title: "保暖送医", desc: "即使恢复意识也必须就医，可能有迟发性肺水肿。用干毛巾保暖，持续监护。" }
+                ]
+            },
+            {
+                id: 14,
+                title: "触电急救",
+                category: "shock-card",
+                icon: `<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`,
+                summary: "先断电再施救，勿直接接触触电者",
+                steps: [
+                    { title: "立即断电", desc: "首先关闭电源开关或拔掉插头。不要用手直接拉触电者！" },
+                    { title: "绝缘分离", desc: "如无法断电，用干燥木棍、塑料棒等绝缘物将触电者与电源分开。" },
+                    { title: "检查伤情", desc: "断电后检查意识和呼吸。触电可能导致心跳骤停，需立即CPR。" },
+                    { title: "处理烧伤", desc: "检查电流进出口烧伤，用干净纱布覆盖。外表烧伤小也可能有严重内伤。" },
+                    { title: "拨打120", desc: "所有触电者即使意识清醒也必须送医，可能有迟发性心律失常。" },
+                    { title: "持续监护", desc: "密切观察呼吸和脉搏直到急救人员到达，做好CPR准备。" }
+                ]
+            },
+            {
+                id: 15,
+                title: "眼中异物处理",
+                category: "eye-card",
+                icon: `<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>`,
+                summary: "勿揉眼，用清水冲洗，化学物质入眼需冲30分钟",
+                steps: [
+                    { title: "不要揉眼", desc: "揉眼会划伤角膜或将异物推得更深。提醒患者忍住揉眼冲动。" },
+                    { title: "清水冲洗", desc: "用干净流动水或生理盐水冲洗眼睛15分钟。水流从内眼角向外眼角。" },
+                    { title: "翻开眼睑", desc: "如仍有异物感，可轻轻翻开眼睑，用湿棉签轻轻擦去可见异物。" },
+                    { title: "化学物入眼", desc: "化学试剂溅入眼睛（实验课常见），用大量清水持续冲洗至少30分钟，同时拨打120。" },
+                    { title: "遮盖保护", desc: "处理后用干净纱布轻轻遮盖眼睛，避免眼球活动加重刺激。" },
+                    { title: "及时就医", desc: "如异物嵌入眼球、视物模糊、持续疼痛或化学烧伤，立即到眼科就诊。" }
+                ]
+            }
         ];
 
         // ========== 全局变量 ==========
@@ -667,17 +868,12 @@
         let buildingLabels = null;
         let customMarkers = [];
         let customMarkerLayer = null;
-        let customAEDData = [];
-        let editableAEDData = null;
         let currentTab = 'map';
         let manualMode = false;
-        let addMarkerMode = false;
 
         // ========== 初始化 ==========
         document.addEventListener('DOMContentLoaded', () => {
             loadCustomMarkers();
-            loadCustomAEDData();
-            initEditableAEDData();
             initMap();
             requestUserLocation();
             
@@ -714,7 +910,7 @@ function fitMapToCampus() {
     let minLat = Infinity, maxLat = -Infinity;
     let minLng = Infinity, maxLng = -Infinity;
 
-    editableAEDData.features.forEach(feature => {
+    AED_DATA.features.forEach(feature => {
         const [lng, lat] = feature.geometry.coordinates;
         minLat = Math.min(minLat, lat);
         maxLat = Math.max(maxLat, lat);
@@ -724,14 +920,6 @@ function fitMapToCampus() {
 
     BUILDING_DATA.forEach(building => {
         const [lng, lat] = building.coordinates;
-        minLat = Math.min(minLat, lat);
-        maxLat = Math.max(maxLat, lat);
-        minLng = Math.min(minLng, lng);
-        maxLng = Math.max(maxLng, lng);
-    });
-
-    customAEDData.forEach(feature => {
-        const [lng, lat] = feature.geometry.coordinates;
         minLat = Math.min(minLat, lat);
         maxLat = Math.max(maxLat, lat);
         minLng = Math.min(minLng, lng);
@@ -784,7 +972,7 @@ function fitMapToCampus() {
         aedMarkers = [];
     }
 
-    const builtInGeometries = editableAEDData.features.map(feature => {
+    const geometries = AED_DATA.features.map(feature => {
         const coords = feature.geometry.coordinates;
         return {
             id: feature.properties.id,
@@ -792,17 +980,6 @@ function fitMapToCampus() {
             properties: feature.properties
         };
     });
-
-    const customGeometries = customAEDData.map(feature => {
-        const coords = feature.geometry.coordinates;
-        return {
-            id: feature.properties.id,
-            position: new TMap.LatLng(coords[1], coords[0]),
-            properties: feature.properties
-        };
-    });
-
-    const geometries = [...builtInGeometries, ...customGeometries];
 
     const aedIcon = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj48Y2lyY2xlIGN4PSIxMCIgY3k9IjEwIiByPSI3IiBmaWxsPSIjMDA4NGNmIi8+PC9zdmc+';
     const markerLayer = new TMap.MultiMarker({
@@ -844,27 +1021,34 @@ function renderCustomMarkers() {
     const geometries = customMarkers.map(marker => ({
         id: marker.id,
         position: new TMap.LatLng(marker.lat, marker.lng),
-        content: marker.name,
         properties: marker
     }));
 
-    customMarkerLayer = new TMap.MultiLabel({
+    const customIcon = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxMCIgZmlsbD0iI0U1MzkzNSIvPjwvc3ZnPg==';
+    
+    customMarkerLayer = new TMap.MultiMarker({
         map: map,
         styles: {
-            'custom': new TMap.LabelStyle({
-                color: '#E53935',
-                fontSize: 14,
-                fontFamily: 'Microsoft YaHei, sans-serif',
-                strokeColor: '#ffffff',
-                strokeWidth: 3,
-                offset: { x: 0, y: -25 },
-                anchor: { x: 0.5, y: 0.5 }
+            'custom': new TMap.MarkerStyle({
+                width: 32,
+                height: 32,
+                anchor: { x: 16, y: 16 },
+                src: customIcon
             })
         },
         geometries: geometries.map(g => ({ ...g, styleId: 'custom' }))
     });
 
     customMarkerLayer.on('click', (e) => {
+        if (e.geometry && e.geometry.properties) {
+            const marker = e.geometry.properties;
+            if (confirm(`确定要删除标注"${marker.name}"吗？`)) {
+                deleteCustomMarker(marker.id);
+            }
+        }
+    });
+    
+    customMarkerLayer.on('touchstart', (e) => {
         if (e.geometry && e.geometry.properties) {
             const marker = e.geometry.properties;
             if (confirm(`确定要删除标注"${marker.name}"吗？`)) {
@@ -919,7 +1103,7 @@ function findNearestAED() {
     let nearest = null;
     let minDistance = Infinity;
 
-    editableAEDData.features.forEach(feature => {
+    AED_DATA.features.forEach(feature => {
         const [lng, lat] = feature.geometry.coordinates;
         const distance = calculateDistance(userLocation[0], userLocation[1], lat, lng);
         if (distance < minDistance) {
@@ -1001,20 +1185,7 @@ function updateUserMarker() {
     });
 }
 
-let pendingMarkerPosition = null;
-let currentMarkerType = 'normal';
-let pendingAEDPhoto = null;
-
 function onMapClick(e) {
-    if (addMarkerMode) {
-        pendingMarkerPosition = {
-            lat: e.latLng.getLat(),
-            lng: e.latLng.getLng()
-        };
-        openMarkerInputModal();
-        return;
-    }
-    
     if (!manualMode) return;
     
     userLocation = [e.latLng.getLat(), e.latLng.getLng()];
@@ -1024,232 +1195,10 @@ function onMapClick(e) {
     document.getElementById('location-status').innerHTML = '<div class="w-2 h-2 bg-amber-500 rounded-full"></div><span>手动定位</span>';
 }
 
-function setMarkerType(type) {
-    currentMarkerType = type;
-    const normalBtn = document.getElementById('marker-type-normal');
-    const aedBtn = document.getElementById('marker-type-aed');
-    const aedFields = document.getElementById('aed-fields');
-    
-    if (type === 'normal') {
-        normalBtn.classList.add('bg-red-50', 'text-red-600', 'border-red-200');
-        normalBtn.classList.remove('bg-gray-50', 'text-gray-500', 'border-gray-200');
-        aedBtn.classList.add('bg-gray-50', 'text-gray-500', 'border-gray-200');
-        aedBtn.classList.remove('bg-red-50', 'text-red-600', 'border-red-200');
-        aedFields.classList.add('hidden');
-    } else {
-        aedBtn.classList.add('bg-red-50', 'text-red-600', 'border-red-200');
-        aedBtn.classList.remove('bg-gray-50', 'text-gray-500', 'border-gray-200');
-        normalBtn.classList.add('bg-gray-50', 'text-gray-500', 'border-gray-200');
-        normalBtn.classList.remove('bg-red-50', 'text-red-600', 'border-red-200');
-        aedFields.classList.remove('hidden');
-    }
-}
-
-function openMarkerInputModal() {
-    const modal = document.getElementById('marker-input-modal');
-    const input = document.getElementById('marker-input');
-    const aedAddress = document.getElementById('aed-address');
-    const aedDesc = document.getElementById('aed-desc');
-    
-    currentMarkerType = 'normal';
-    setMarkerType('normal');
-    
-    input.value = '';
-    aedAddress.value = '';
-    aedDesc.value = '';
-    
-    const aedLatitude = document.getElementById('aed-latitude');
-    const aedLongitude = document.getElementById('aed-longitude');
-    aedLatitude.value = '';
-    aedLongitude.value = '';
-    
-    pendingAEDPhoto = null;
-    const photoPreview = document.getElementById('aed-photo-preview');
-    const photoImg = document.getElementById('aed-photo-img');
-    const photoInput = document.getElementById('aed-photo-input');
-    photoPreview.classList.add('hidden');
-    photoImg.src = '';
-    photoInput.value = '';
-    
-    modal.classList.remove('hidden');
-    input.focus();
-}
-
-function cancelMarkerInput() {
-    const modal = document.getElementById('marker-input-modal');
-    modal.classList.add('hidden');
-    pendingMarkerPosition = null;
-    toggleAddMarkerMode();
-}
-
-function confirmMarkerInput() {
-    const input = document.getElementById('marker-input');
-    const name = input.value.trim();
-    
-    if (!name) {
-        return;
-    }
-    
-    if (currentMarkerType === 'aed') {
-        const aedAddress = document.getElementById('aed-address');
-        const aedDesc = document.getElementById('aed-desc');
-        const aedLatitude = document.getElementById('aed-latitude');
-        const aedLongitude = document.getElementById('aed-longitude');
-        
-        const lat = parseFloat(aedLatitude.value) || pendingMarkerPosition.lat;
-        const lng = parseFloat(aedLongitude.value) || pendingMarkerPosition.lng;
-        
-        const newAED = {
-            type: "Feature",
-            properties: {
-                id: "AED_CUSTOM_" + Date.now(),
-                name: name + "(AED)",
-                address: aedAddress.value.trim() || '未填写详细地址',
-                description: aedDesc.value.trim() || '用户新增的AED设备',
-                campus: "本部校区",
-                hours: "全天候开放",
-                photo: pendingAEDPhoto || ""
-            },
-            geometry: {
-                type: "Point",
-                coordinates: [lng, lat]
-            }
-        };
-        
-        customAEDData.push(newAED);
-        saveCustomAEDData();
-        renderAEDMarkers();
-    } else {
-        const newMarker = {
-            id: 'marker_' + Date.now(),
-            lat: pendingMarkerPosition.lat,
-            lng: pendingMarkerPosition.lng,
-            name: name
-        };
-        customMarkers.push(newMarker);
-        saveCustomMarkers();
-        renderCustomMarkers();
-    }
-    
-    const modal = document.getElementById('marker-input-modal');
-    modal.classList.add('hidden');
-    pendingMarkerPosition = null;
-    toggleAddMarkerMode();
-}
-
-function loadCustomAEDData() {
-    try {
-        const saved = localStorage.getItem('custom_aed_data');
-        if (saved) {
-            customAEDData = JSON.parse(saved);
-        }
-    } catch (e) {
-        customAEDData = [];
-    }
-}
-
-function saveCustomAEDData() {
-    localStorage.setItem('custom_aed_data', JSON.stringify(customAEDData));
-}
-
-function initEditableAEDData() {
-    const saved = localStorage.getItem('editable_aed_data');
-    if (saved) {
-        editableAEDData = JSON.parse(saved);
-    } else {
-        editableAEDData = JSON.parse(JSON.stringify(ORIGINAL_AED_DATA));
-    }
-}
-
-function saveEditableAEDData() {
-    localStorage.setItem('editable_aed_data', JSON.stringify(editableAEDData));
-}
-
-function deleteCustomAED(aedId) {
-    if (!confirm('确定要删除这个AED设备吗？')) {
-        return;
-    }
-    
-    if (aedId.startsWith('AED_CUSTOM_')) {
-        customAEDData = customAEDData.filter(aed => aed.properties.id !== aedId);
-        saveCustomAEDData();
-    } else {
-        editableAEDData.features = editableAEDData.features.filter(aed => aed.properties.id !== aedId);
-        saveEditableAEDData();
-    }
-    
-    renderAEDMarkers();
-    closeAEDModal();
-}
-
-function handleAEDPhotoUpload(input) {
-    const file = input.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const maxWidth = 800;
-            const maxHeight = 800;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > maxWidth) {
-                height = (height * maxWidth) / width;
-                width = maxWidth;
-            }
-            if (height > maxHeight) {
-                width = (width * maxHeight) / height;
-                height = maxHeight;
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            pendingAEDPhoto = canvas.toDataURL('image/jpeg', 0.7);
-            
-            const preview = document.getElementById('aed-photo-preview');
-            const previewImg = document.getElementById('aed-photo-img');
-            previewImg.src = pendingAEDPhoto;
-            preview.classList.remove('hidden');
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-}
-
-function removeAEDPhoto() {
-    pendingAEDPhoto = null;
-    const preview = document.getElementById('aed-photo-preview');
-    const previewImg = document.getElementById('aed-photo-img');
-    const input = document.getElementById('aed-photo-input');
-    preview.classList.add('hidden');
-    previewImg.src = '';
-    input.value = '';
-}
-
 function enableManualSelect() {
     manualMode = true;
     alert('请在地图上点击选择您的位置');
     document.getElementById('location-denied').classList.add('hidden');
-}
-
-function toggleAddMarkerMode() {
-    addMarkerMode = !addMarkerMode;
-    const btn = document.getElementById('nav-add-marker');
-    
-    if (addMarkerMode) {
-        btn.classList.add('nav-active');
-        btn.classList.remove('text-gray-400');
-        alert('请在地图上点击位置添加标注');
-    } else {
-        btn.classList.remove('nav-active');
-        btn.classList.add('text-gray-400');
-    }
 }
 
      // WGS84 转 GCJ02 本地算法（中国大陆通用）
@@ -1311,31 +1260,19 @@ function convertWgs84ToGcj02(lat, lon) {
                     </div>
                 </div>
 
-                ${props.photo ? `
                 <div class="mb-4">
-                    <div class="text-sm text-gray-500 mb-2">现场照片</div>
-                    <div class="relative rounded-xl overflow-hidden group">
-                        <img src="${props.photo}" 
-                             class="w-full h-auto max-h-[200px] object-cover"
-                             alt="AED现场照片">
-                        <button onclick="openPhotoViewer('${props.photo}')" class="absolute bottom-3 right-3 w-10 h-10 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center card-press transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                ` : `
-                <div class="mb-4">
-                    <div class="text-sm text-gray-500 mb-2">现场照片</div>
-                    <div class="relative rounded-xl overflow-hidden bg-gray-100 py-8 flex flex-col items-center justify-center text-gray-400">
-                        <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        <span class="text-sm">暂无照片</span>
-                    </div>
-                </div>
-                `}
+    <div class="text-sm text-gray-500 mb-2">现场照片</div>
+    <div class="relative rounded-xl overflow-hidden group">
+        <img src="${props.photo}" 
+             class="w-full h-auto max-h-[200px] object-cover"
+             alt="AED现场照片">
+        <button onclick="openPhotoViewer('${props.photo}')" class="absolute bottom-3 right-3 w-10 h-10 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center card-press transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/>
+            </svg>
+        </button>
+    </div>
+</div>
 
                 <div class="grid grid-cols-2 gap-3 mb-4">
                     <div class="bg-gray-50 rounded-xl p-3">
@@ -1354,12 +1291,6 @@ function convertWgs84ToGcj02(lat, lon) {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 7m0 13V7"/>
                         </svg>
                         一键导航
-                    </button>
-                    <button onclick="deleteCustomAED('${props.id}')" class="px-6 py-3 bg-gray-100 text-gray-600 font-medium rounded-xl card-press flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                        </svg>
-                        删除
                     </button>
                 </div>
             `;
@@ -1380,6 +1311,18 @@ function convertWgs84ToGcj02(lat, lon) {
 
         function closePhotoViewer() {
             const modal = document.getElementById('photo-viewer-modal');
+            modal.classList.add('hidden');
+        }
+
+        function openImageViewer() {
+            const modal = document.getElementById('image-viewer-modal');
+            const img = document.getElementById('image-viewer-img');
+            img.src = 'https://s41.ax1x.com/2026/07/17/pmyW4HK.png';
+            modal.classList.remove('hidden');
+        }
+
+        function closeImageViewer() {
+            const modal = document.getElementById('image-viewer-modal');
             modal.classList.add('hidden');
         }
 
@@ -1414,18 +1357,11 @@ function navigateToAED(aedName) {
     window.open(navUrl, '_blank');
 }
               function findAEDCoords(name) {
-            const feature = editableAEDData.features.find(f => f.properties.name === name);
+            const feature = AED_DATA.features.find(f => f.properties.name === name);
             if (feature) {
                 const coords = feature.geometry.coordinates;
                 return [coords[0], coords[1]];
             }
-            
-            const customFeature = customAEDData.find(f => f.properties.name === name);
-            if (customFeature) {
-                const coords = customFeature.geometry.coordinates;
-                return [coords[0], coords[1]];
-            }
-            
             return null;
         }
 
@@ -1449,11 +1385,19 @@ function navigateToAED(aedName) {
             document.getElementById('map-page').classList.add('page-hidden');
             document.getElementById('knowledge-page').classList.add('page-hidden');
             document.getElementById('knowledge-detail-page').classList.add('page-hidden');
+            const ap = document.getElementById('ai-page'); ap.classList.add('page-hidden'); ap.style.display = 'none';
             
             if (tab === 'map') {
                 document.getElementById('map-page').classList.remove('page-hidden');
                            } else if (tab === 'knowledge') {
                 document.getElementById('knowledge-page').classList.remove('page-hidden');
+                renderKnowledgeCards();
+            } else if (tab === 'ai') {
+                const aiPage = document.getElementById('ai-page');
+                aiPage.classList.remove('page-hidden');
+                aiPage.style.display = 'flex';
+                aiPage.style.flexDirection = 'column';
+                initAIChat();
             }
 
             // 更新标题栏
@@ -1462,11 +1406,24 @@ function navigateToAED(aedName) {
                 subtitle.textContent = '保护生命，分秒必争';
             } else if (tab === 'knowledge') {
                 subtitle.textContent = '关键时刻能救命';
+            } else if (tab === 'ai') {
+                subtitle.textContent = 'AI急救顾问，随时为您服务';
             }
         }
 
         // ========== 急救知识 ==========
-        function renderKnowledgeCards() {
+        function searchKnowledge() {
+            const query = document.getElementById('knowledge-search').value.toLowerCase();
+            const cards = document.querySelectorAll('#knowledge-cards > div');
+            cards.forEach(card => {
+                const title = card.querySelector('h3');
+                if (title) {
+                    card.style.display = title.textContent.toLowerCase().includes(query) ? 'block' : 'none';
+                }
+            });
+        }
+
+                function renderKnowledgeCards() {
             const container = document.getElementById('knowledge-cards');
             container.innerHTML = KNOWLEDGE_DATA.map(k => `
                 <div onclick="openKnowledgeDetail(${k.id})" class="card-press ${k.category} rounded-2xl p-5 text-white shadow-xl cursor-pointer hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 relative overflow-hidden">
@@ -1563,10 +1520,15 @@ function navigateToAED(aedName) {
             if (e.target === document.getElementById('emergency-modal')) closeEmergencyModal();
         });
 
+        document.getElementById('image-viewer-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('image-viewer-modal')) closeImageViewer();
+        });
+
         // 防止底部导航点击穿透
         document.getElementById('bottom-nav').addEventListener('touchstart', (e) => {
             e.stopPropagation();
         }, { passive: true });
     </script>
+    <script src="ai-agent.js"></script>
 </body>
 </html>
