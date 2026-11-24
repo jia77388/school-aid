@@ -901,12 +901,87 @@ function initMap() {
     map.on('click', onMapClick);
 
     renderAEDMarkers();
+    bindMapTapFallback();
     
     setTimeout(() => {
         renderBuildingLabels();
         renderCustomMarkers();
         fitMapToCampus();
     }, 300);
+}
+
+// 图标点击识别：直接在 #map 上监听原生触摸与点击，按坐标命中最近的 AED 图标，
+// 不依赖地图 SDK 的图标事件（部分手机浏览器/内置浏览器收不到这些事件）
+function bindMapTapFallback() {
+    const mapEl = document.getElementById('map');
+    if (!mapEl || mapEl.dataset.aedTapBound === '1') return;
+    mapEl.dataset.aedTapBound = '1';
+
+    let touchStart = null;
+    let mouseStart = null;
+
+    // 找出点击位置附近（26px 内）最近的 AED
+    const hitTestAED = (clientX, clientY) => {
+        const rect = mapEl.getBoundingClientRect();
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+        let best = null;
+        AED_DATA.features.forEach((feature) => {
+            const [lng, lat] = feature.geometry.coordinates;
+            const p = map.projectToContainer(new TMap.LatLng(lat, lng));
+            const d = Math.hypot(p.getX() - x, p.getY() - y);
+            if (d <= 26 && (!best || d < best.d)) best = { d: d, props: feature.properties };
+        });
+        return best ? best.props : null;
+    };
+
+    const openAEDAt = (clientX, clientY, fromTouch) => {
+        if (manualMode) return;
+
+        // 点到缩放按钮、比例尺等地图控件时不要误弹详情
+        const topEl = document.elementFromPoint(clientX, clientY);
+        if (!topEl || !mapEl.contains(topEl)) return;
+        const topRect = topEl.getBoundingClientRect();
+        const mapRect = mapEl.getBoundingClientRect();
+        if (topRect.width < mapRect.width * 0.8 || topRect.height < mapRect.height * 0.8) return;
+
+        const props = hitTestAED(clientX, clientY);
+        if (!props) return;
+
+        const now = Date.now();
+        if (props.id === aedTapLockId && now - aedTapLockAt < 800) return;
+        aedTapLockId = props.id;
+        aedTapLockAt = now;
+        if (fromTouch) aedSwallowClickUntil = now + 400;
+
+        openAEDModal(props);
+    };
+
+    mapEl.addEventListener('touchstart', (e) => {
+        const t = e.changedTouches[0];
+        touchStart = { x: t.clientX, y: t.clientY };
+    }, { passive: true, capture: true });
+
+    mapEl.addEventListener('touchcancel', () => { touchStart = null; }, { passive: true, capture: true });
+
+    mapEl.addEventListener('touchend', (e) => {
+        if (!touchStart) return;
+        const t = e.changedTouches[0];
+        const moved = Math.hypot(t.clientX - touchStart.x, t.clientY - touchStart.y);
+        touchStart = null;
+        // 只有滑动地图不算点击；手指停留时间长一点也仍然算点击（照顾慢速点击）
+        if (moved <= 12) openAEDAt(t.clientX, t.clientY, true);
+    }, { passive: true, capture: true });
+
+    mapEl.addEventListener('mousedown', (e) => {
+        mouseStart = { x: e.clientX, y: e.clientY };
+    }, true);
+
+    mapEl.addEventListener('click', (e) => {
+        const moved = mouseStart ? Math.hypot(e.clientX - mouseStart.x, e.clientY - mouseStart.y) : 0;
+        mouseStart = null;
+        if (moved <= 12) openAEDAt(e.clientX, e.clientY, false);
+    }, true);
 }
 
 function fitMapToCampus() {
@@ -999,28 +1074,8 @@ function fitMapToCampus() {
         geometries: geometries.map(g => ({ ...g, styleId: 'aed' }))
     });
 
-    // touchstart / touchend / click 三条路径都接，兼容不同手机浏览器：
-    // 部分浏览器只触发 touchstart，部分只触发 click；
-    // 同一次触摸会触发多个事件，用 aedTapLockId 去重，保证只弹一次
-    const handleAedMarkerTap = (e, fromTouch) => {
-        const props = e && e.geometry && e.geometry.properties;
-        if (!props) return;
-
-        const now = Date.now();
-        if (props.id === aedTapLockId && now - aedTapLockAt < 800) return;
-        aedTapLockId = props.id;
-        aedTapLockAt = now;
-
-        // 触摸弹窗后浏览器会补发一个 click，落在刚弹出的面板上可能误触按钮，需忽略掉
-        if (fromTouch) aedSwallowClickUntil = now + 1000;
-
-        openAEDModal(props);
-    };
-
-    markerLayer.on('touchstart', (e) => handleAedMarkerTap(e, true));
-    markerLayer.on('touchend', (e) => handleAedMarkerTap(e, true));
-    markerLayer.on('click', (e) => handleAedMarkerTap(e, false));
-
+    // 图标点击统一由 bindMapTapFallback() 的 DOM 坐标命中来识别，
+    // 不再依赖地图 SDK 的图标事件（部分手机浏览器根本收不到）
     aedMarkers.push(markerLayer);
 }           
 
