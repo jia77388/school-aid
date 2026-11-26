@@ -1527,7 +1527,22 @@ function navigateToAED(aedName) {
     // 4. 跳转
     // 先收起详情弹窗再跳转，否则返回页面时弹窗仍盖在地图上，点击 AED 图标会全部失效
     closeAEDModal();
-    window.open(navUrl, '_blank');
+
+    // 手机浏览器/微信、QQ 等内置浏览器通常只允许第一次新建窗口，
+    // 之后再调用 window.open 会被静默拦截，表现为“第一次能打开腾讯地图，之后点了没反应”。
+    // 这里固定窗口名复用同一个标签页，并在被拦截时退回当前页跳转，保证每次点击都能进入导航。
+    let navWindow = null;
+    try {
+        navWindow = window.open(navUrl, 'aed_tencent_map_nav');
+    } catch (err) {
+        navWindow = null;
+    }
+
+    if (!navWindow || navWindow.closed) {
+        window.location.href = navUrl;
+        return;
+    }
+    try { navWindow.focus(); } catch (err) {}
 }
               function findAEDCoords(name) {
             const feature = AED_DATA.features.find(f => f.properties.name === name);
