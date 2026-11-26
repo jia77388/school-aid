@@ -1514,35 +1514,68 @@ function navigateToAED(aedName) {
     const lng = destCoords[0]; // 经度
     const lat = destCoords[1]; // 纬度
 
-    // 3. 拼接正确导航链接（腾讯地图：纬度在前，经度在后）
+    // 3. 拼接导航链接（腾讯地图：纬度在前，经度在后）
     const YOUR_KEY = "6WOBZ-EEELQ-VSD5J-BQPIQ-Q2HQ6-AWFQN";
-    const navUrl = `https://apis.map.qq.com/uri/v1/routeplan`
+    const fromName = encodeURIComponent('我的位置');
+    const toName = encodeURIComponent(aedName);
+
+    // 手机端直接唤起腾讯地图 App 的协议，每次点击都会重新出现“打开腾讯地图”的提示
+    const appUrl = `qqmap://map/routeplan`
         + `?type=walk`
+        + `&from=${fromName}`
         + `&fromcoord=${userLocation[0]},${userLocation[1]}`  // 用户：纬度,经度
+        + `&to=${toName}`
         + `&tocoord=${lat},${lng}`                            // AED：纬度,经度
-        + `&from=我的位置`
-        + `&to=${aedName}`
+        + `&referer=${YOUR_KEY}`;
+
+    // 未安装 App 时的网页版路线规划兜底
+    const webUrl = `https://apis.map.qq.com/uri/v1/routeplan`
+        + `?type=walk`
+        + `&fromcoord=${userLocation[0]},${userLocation[1]}`
+        + `&tocoord=${lat},${lng}`
+        + `&from=${fromName}`
+        + `&to=${toName}`
         + `&key=${YOUR_KEY}`;
 
     // 4. 跳转
     // 先收起详情弹窗再跳转，否则返回页面时弹窗仍盖在地图上，点击 AED 图标会全部失效
     closeAEDModal();
+    launchTencentMap(appUrl, webUrl);
+}
 
-    // 手机浏览器/微信、QQ 等内置浏览器通常只允许第一次新建窗口，
-    // 之后再调用 window.open 会被静默拦截，表现为“第一次能打开腾讯地图，之后点了没反应”。
-    // 这里固定窗口名复用同一个标签页，并在被拦截时退回当前页跳转，保证每次点击都能进入导航。
-    let navWindow = null;
-    try {
-        navWindow = window.open(navUrl, 'aed_tencent_map_nav');
-    } catch (err) {
-        navWindow = null;
-    }
-
-    if (!navWindow || navWindow.closed) {
-        window.location.href = navUrl;
+function launchTencentMap(appUrl, webUrl) {
+    // 桌面浏览器没有 App，直接新窗口打开网页版路线规划
+    if (!/Android|iPhone|iPad|iPod|HarmonyOS|Mobile/i.test(navigator.userAgent)) {
+        let win = null;
+        try { win = window.open(webUrl, '_blank'); } catch (err) { win = null; }
+        if (!win || win.closed) window.location.href = webUrl;
         return;
     }
-    try { navWindow.focus(); } catch (err) {}
+
+    // 手机端每次都主动唤起 App。
+    // 之前依赖腾讯网页版自动拉起 App，浏览器只在第一次弹“打开”，之后就只显示下载引导页；
+    // 直接调用 App 协议可以保证每次点击都重新出现“打开腾讯地图”的确认。
+    let leftPage = false;
+    const markLeft = () => { if (document.hidden) leftPage = true; };
+    document.addEventListener('visibilitychange', markLeft);
+    window.addEventListener('pagehide', markLeft);
+
+    // 没装 App 或浏览器不处理协议时，4 秒后退回网页版路线规划（留足确认“打开”的时间）
+    setTimeout(() => {
+        if (leftPage || document.hidden) return;
+        window.location.href = webUrl;
+    }, 4000);
+
+    if (/Android/i.test(navigator.userAgent)) {
+        // Android 使用 intent 协议：已安装会弹出打开确认，未安装会自动跳转 S.browser_fallback_url
+        const schemePath = appUrl.replace(/^qqmap:\/\//, '');
+        window.location.href = `intent://${schemePath}`
+            + `#Intent;scheme=qqmap;package=com.tencent.map;`
+            + `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
+    } else {
+        // iOS / HarmonyOS NEXT：直接使用 qqmap:// scheme
+        window.location.href = appUrl;
+    }
 }
               function findAEDCoords(name) {
             const feature = AED_DATA.features.find(f => f.properties.name === name);
