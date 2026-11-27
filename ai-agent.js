@@ -1,6 +1,6 @@
 // ========== AI Agent - DeepSeek API (Streaming + Markdown) ==========
 
-const DEEPSEEK_API_KEY = 'sk-5b942b12a1e747a5bd01fd92ef3e6884';
+const DEEPSEEK_API_KEY = 'sk-37d5cc14ff3649d7a9dde0d8eea77a7f';
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
 let aiMessages = [];
@@ -99,21 +99,33 @@ async function sendMessage(text) {
         hideTyping();
         if (!response.ok) {
             const errText = await response.text(); console.error('API error:', response.status, errText);
-            addMessage('ai', '抱歉，服务暂时不可用，请稍后再试。如情况紧急请立即拨打120！');
+            let tip;
+            if (response.status === 402) {
+                tip = 'AI 服务账户余额不足（402），请联系管理员充值后重试。如情况紧急请立即拨打120！';
+            } else if (response.status === 401 || response.status === 403) {
+                tip = 'AI 服务密钥无效（' + response.status + '），请检查配置。如情况紧急请立即拨打120！';
+            } else if (response.status === 429) {
+                tip = '请求过于频繁，请稍候再试。如情况紧急请立即拨打120！';
+            } else {
+                tip = 'AI 服务暂时不可用（' + response.status + '），请稍后再试。如情况紧急请立即拨打120！';
+            }
+            addMessage('ai', tip);
             finishThinking(); return;
         }
         currentAiBubble = createStreamBubble();
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let fullContent = '';
+        let pending = '';  // 缓存被网络分包截断的半行 SSE 数据
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-            const chunk = decoder.decode(value, { stream: true });
-            const lines = chunk.split('\n');
+            pending += decoder.decode(value, { stream: true });
+            const lines = pending.split('\n');
+            pending = lines.pop();  // 最后一段可能不完整，留到下次拼接
             for (const line of lines) {
                 if (line.startsWith('data: ')) {
-                    const data = line.slice(6);
+                    const data = line.slice(6).trim();
                     if (data === '[DONE]') continue;
                     try {
                         const parsed = JSON.parse(data);
